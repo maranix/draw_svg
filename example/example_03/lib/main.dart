@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:core';
-import 'dart:ui';
 import 'package:drawing_animation/drawing_animation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,7 +10,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -262,7 +260,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ? Column(children: <Widget>[
         AnimatedSize(
             curve: Curves.bounceInOut,
-            vsync: this,
             duration: Duration(milliseconds: 800),
             child: Card(
                 margin: EdgeInsets.all(20.0),

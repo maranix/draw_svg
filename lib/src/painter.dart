@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'debug.dart';
 import 'parser.dart';
@@ -29,7 +28,7 @@ class PaintedPainter extends PathPainter {
     canvas = super.paintOrDebug(canvas, size);
     if (canPaint) {
       //pathSegments for AllAtOncePainter are always in the order of PathOrders.original
-      pathSegments!.forEach((segment) {
+      for (var segment in pathSegments!) {
         var paint = (paints.isNotEmpty)
             ? paints[segment.pathIndex]
             : (Paint()
@@ -38,7 +37,7 @@ class PaintedPainter extends PathPainter {
               ..strokeCap = StrokeCap.square
               ..strokeWidth = segment.strokeWidth);
         canvas.drawPath(segment.path, paint);
-      });
+      }
 
       //No callback etc. needed
       // super.onFinish(canvas, size);
@@ -64,7 +63,7 @@ class AllAtOncePainter extends PathPainter {
     canvas = super.paintOrDebug(canvas, size);
     if (canPaint) {
       //pathSegments for AllAtOncePainter are always in the order of PathOrders.original
-      pathSegments!.forEach((segment) {
+      for (var segment in pathSegments!) {
         var subPath = segment.path
             .computeMetrics()
             .first
@@ -78,7 +77,7 @@ class AllAtOncePainter extends PathPainter {
               ..strokeCap = StrokeCap.square
               ..strokeWidth = segment.strokeWidth);
         canvas.drawPath(subPath, paint);
-      });
+      }
 
       super.onFinish(canvas, size);
     }
@@ -99,7 +98,9 @@ class OneByOnePainter extends PathPainter {
         super(animation, pathSegments, customDimensions, paints,
             onFinishCallback, scaleToViewport, debugOptions) {
     if (this.pathSegments != null) {
-      this.pathSegments!.forEach((e) => totalPathSum += e.length);
+      for (var e in this.pathSegments!) {
+        totalPathSum += e.length;
+      }
     }
   }
 
@@ -158,8 +159,7 @@ class OneByOnePainter extends PathPainter {
       }
       //[3.2] Restore rendering order - last path element in original PathOrder should be last painted -> most visible
       //[3.3] Paint elements
-      (toPaint..sort(Extractor.getComparator(PathOrders.original)))
-          .forEach((segment) {
+      for (var segment in (toPaint..sort(Extractor.getComparator(PathOrders.original)))) {
         paint = (paints.isNotEmpty)
             ? paints[segment.pathIndex]
             : (Paint() //Paint per path TODO implement Paint per PathSegment?
@@ -170,7 +170,7 @@ class OneByOnePainter extends PathPainter {
               ..strokeCap = StrokeCap.square
               ..strokeWidth = segment.strokeWidth);
         canvas.drawPath(segment.path, paint);
-      });
+      }
 
       if (animation.value != 1.0) {
         //[3.4] Remove last subPath
@@ -238,19 +238,19 @@ abstract class PathPainter extends CustomPainter {
     var bb = pathSegments!.first.path.getBounds();
     var strokeWidth = 0;
 
-    pathSegments!.forEach((e) {
+    for (var e in pathSegments!) {
       bb = bb.expandToInclude(e.path.getBounds());
       if (strokeWidth < e.strokeWidth) {
         strokeWidth = e.strokeWidth.toInt();
       }
-    });
+    }
 
     if (paints.isNotEmpty) {
-      paints.forEach((e) {
+      for (var e in paints) {
         if (strokeWidth < e.strokeWidth) {
           strokeWidth = e.strokeWidth.toInt();
         }
-      });
+      }
     }
     pathBoundingBox = bb.inflate(strokeWidth / 2);
     this.strokeWidth = strokeWidth.toDouble();

@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:path_parsing/path_parsing.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:xml/xml.dart';
-import 'package:collection/collection.dart';
 
 //SVG parsing
 
@@ -20,19 +18,17 @@ class SvgParser {
   Color parseColor(String cStr) {
     if (cStr.isEmpty) throw UnsupportedError('Empty color field found.');
     if (cStr[0] == '#') {
-      return Color(int.parse(cStr.substring(1), radix: 16)).withOpacity(
-          1.0); // Hex to int: from https://stackoverflow.com/a/51290420/9452450
+      return Color(int.parse(cStr.substring(1), radix: 16))
+          .withOpacity(1.0); // Hex to int: from https://stackoverflow.com/a/51290420/9452450
     } else if (cStr == 'none') {
       return Colors.transparent;
     } else {
-      throw UnsupportedError(
-          'Only hex color format currently supported. String:  $cStr');
+      throw UnsupportedError('Only hex color format currently supported. String:  $cStr');
     }
   }
 
   //Extract segments of each path and create [PathSegment] representation
-  void addPathSegments(
-      Path path, int index, double? strokeWidth, Color? color) {
+  void addPathSegments(Path path, int index, double? strokeWidth, Color? color) {
     var firstPathSegmentIndex = _pathSegments.length;
     var relativeIndex = 0;
     path.computeMetrics().forEach((pp) {
@@ -57,10 +53,7 @@ class SvgParser {
     var index = 0; //number of parsed path elements
     var doc = XmlDocument.parse(svgString);
     //TODO For now only <path> tags are considered for parsing (add circle, rect, arcs etc.)
-    doc
-        .findAllElements('path')
-        .map((node) => node.attributes)
-        .forEach((attributes) {
+    doc.findAllElements('path').map((node) => node.attributes).forEach((attributes) {
       var dPath = attributes.firstWhereOrNull((attr) => attr.name.local == 'd');
       if (dPath != null) {
         var path = Path();
@@ -85,14 +78,12 @@ class SvgParser {
         }
 
         //Attributes - [2] svg-attributes
-        var strokeElement = attributes.firstWhereOrNull(
-            (attr) => attr.name.local == 'stroke');
+        var strokeElement = attributes.firstWhereOrNull((attr) => attr.name.local == 'stroke');
         if (strokeElement != null) {
           color = parseColor(strokeElement.value);
         }
 
-        var strokeWidthElement = attributes.firstWhereOrNull(
-            (attr) => attr.name.local == 'stroke-width');
+        var strokeWidthElement = attributes.firstWhereOrNull((attr) => attr.name.local == 'stroke-width');
         if (strokeWidthElement != null) {
           strokeWidth = double.tryParse(strokeWidthElement.value);
         }
@@ -109,12 +100,11 @@ class SvgParser {
     _paths = paths;
 
     var index = 0;
-    paths.forEach((p) {
+    for (var p in paths) {
       //TODO consider allowing this and just continue if the case
-      addPathSegments(p, index, null,
-          null); //TODO Apply `paints` already here? not so SOLID[0]
+      addPathSegments(p, index, null, null); //TODO Apply `paints` already here? not so SOLID[0]
       index++;
-    });
+    }
   }
 
   /// Parses Svg from provided asset path
@@ -184,8 +174,7 @@ class PathModifier extends PathProxy {
   }
 
   @override
-  void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
     path.cubicTo(x1, y1, x2, y2, x3, y3);
   }
 

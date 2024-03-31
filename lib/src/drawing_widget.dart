@@ -1,6 +1,4 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'abstract_drawing_state.dart';
 import 'debug.dart';
 import 'drawing_state.dart';
@@ -33,7 +31,7 @@ class AnimatedDrawing extends StatefulWidget {
   /// )
   /// ```
   AnimatedDrawing.svg(
-    this.assetPath, {
+    this.assetPath, {Key? key, 
     //Standard
     this.controller,
     //Simplified version
@@ -51,7 +49,7 @@ class AnimatedDrawing extends StatefulWidget {
     this.scaleToViewport = true,
     this.debug,
   })  : paths = [],
-        paints = [] {
+        paints = [], super(key: key) {
     assertAnimationParameters();
     assert(assetPath.isNotEmpty);
   }
@@ -78,7 +76,7 @@ class AnimatedDrawing extends StatefulWidget {
   ///
   /// Optionally, [paints] can be provided which specifies a [Paint] object for each [Path] element in [paths].
   AnimatedDrawing.paths(
-    this.paths, {
+    this.paths, {Key? key, 
     //AnimatedDrawing.paths
     this.paints = const <Paint>[],
     //Standard
@@ -97,7 +95,7 @@ class AnimatedDrawing extends StatefulWidget {
     this.lineAnimation = LineAnimation.oneByOne,
     this.scaleToViewport = true,
     this.debug,
-  }) : assetPath = '' {
+  }) : assetPath = '', super(key: key) {
     assertAnimationParameters();
     assert(paths.isNotEmpty);
     if (paints.isNotEmpty) assert(paints.length == paths.length);

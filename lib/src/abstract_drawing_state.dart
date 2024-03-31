@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'dart:ui';
 import 'drawing_widget.dart';
 import 'debug.dart';
 import 'line_animation.dart';
@@ -26,10 +25,8 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
   int lastPaintedPathIndex = -1;
 
   List<PathSegment> pathSegments = <PathSegment>[];
-  List<PathSegment> pathSegmentsToAnimate =
-      <PathSegment>[]; //defined by [range.start] and [range.end]
-  List<PathSegment> pathSegmentsToPaintAsBackground =
-      <PathSegment>[]; //defined by < [range.start]
+  List<PathSegment> pathSegmentsToAnimate = <PathSegment>[]; //defined by [range.start] and [range.end]
+  List<PathSegment> pathSegmentsToPaintAsBackground = <PathSegment>[]; //defined by < [range.start]
 
   VoidCallback? onFinishAnimation;
 
@@ -55,9 +52,7 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
   void evokeOnPaintForNewlyPaintedPaths(int currentPaintedPathIndex) {
     final paintedPaths = pathSegments[currentPaintedPathIndex].pathIndex -
         lastPaintedPathIndex; //TODO you should iterate over the indices of the sorted path segments not the original ones
-    for (var i = lastPaintedPathIndex + 1;
-        i <= lastPaintedPathIndex + paintedPaths;
-        i++) {
+    for (var i = lastPaintedPathIndex + 1; i <= lastPaintedPathIndex + paintedPaths; i++) {
       evokeOnPaintForPath(i);
     }
     lastPaintedPathIndex = currentPaintedPathIndex;
@@ -75,8 +70,7 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
   bool newPathPainted(int currentPaintedPathIndex) {
     return widget.onPaint != null &&
         currentPaintedPathIndex != -1 &&
-        pathSegments[currentPaintedPathIndex].pathIndex - lastPaintedPathIndex >
-            0;
+        pathSegments[currentPaintedPathIndex].pathIndex - lastPaintedPathIndex > 0;
   }
 
   @override
@@ -103,8 +97,7 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
 
   void applyAnimationCurve() {
     if (controller != null && widget.animationCurve != null) {
-      curve =
-          CurvedAnimation(parent: controller!, curve: widget.animationCurve!);
+      curve = CurvedAnimation(parent: controller!, curve: widget.animationCurve!);
       animationCurve = widget.animationCurve;
     }
   }
@@ -117,8 +110,7 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
     } else if (curve != null && animationCurve == widget.animationCurve) {
       animation = curve!;
     } else if (widget.animationCurve != null && controller != null) {
-      curve =
-          CurvedAnimation(parent: controller!, curve: widget.animationCurve!);
+      curve = CurvedAnimation(parent: controller!, curve: widget.animationCurve!);
       animationCurve = widget.animationCurve;
       animation = curve!;
     } else {
@@ -183,13 +175,10 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
     if (widget.range != range) {
       checkValidRange();
 
-      pathSegmentsToPaintAsBackground = pathSegments
-          .where((x) => x.pathIndex < widget.range!.start!)
-          .toList();
+      pathSegmentsToPaintAsBackground = pathSegments.where((x) => x.pathIndex < widget.range!.start!).toList();
 
       pathSegmentsToAnimate = pathSegments
-          .where((x) => (x.pathIndex >= widget.range!.start! &&
-              x.pathIndex <= widget.range!.end!))
+          .where((x) => (x.pathIndex >= widget.range!.start! && x.pathIndex <= widget.range!.end!))
           .toList();
 
       range = widget.range;
@@ -197,12 +186,7 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
   }
 
   void checkValidRange() {
-    RangeError.checkValidRange(
-        widget.range!.start!,
-        widget.range!.end,
-        widget.paths.length - 1,
-        'start',
-        'end',
+    RangeError.checkValidRange(widget.range!.start!, widget.range!.end, widget.paths.length - 1, 'start', 'end',
         'The provided range is invalid for the provided number of paths.');
   }
 
@@ -265,8 +249,7 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
   }
 
   void parseFromPaths(SvgParser parser) {
-    parser.loadFromPaths(widget
-        .paths); //Path object are parsed completely upon every state change
+    parser.loadFromPaths(widget.paths); //Path object are parsed completely upon every state change
     setState(() {
       pathSegments = parser.getPathSegments();
     });
@@ -292,8 +275,7 @@ abstract class AbstractAnimatedDrawingState extends State<AnimatedDrawing> {
   bool checkIfDefaultOrderSortingRequired() {
     // always keep paths for allAtOnce animation in original path order so we do not sort for the correct PaintOrder later on (which is pretty expensive for AllAtOncePainter)
     final defaultSortingWhenNoOrderDefined =
-        widget.lineAnimation == LineAnimation.allAtOnce &&
-            animationOrder != PathOrders.original;
+        widget.lineAnimation == LineAnimation.allAtOnce && animationOrder != PathOrders.original;
     return defaultSortingWhenNoOrderDefined || widget.lineAnimation == null;
   }
 }

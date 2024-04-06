@@ -66,7 +66,7 @@
 ///       }),
 ///     )
 ///   ```
-library drawing_animation;
+library draw_svg;
 
 export 'src/drawing_widget.dart';
 export 'src/path_order.dart' hide Extractor;

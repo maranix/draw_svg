@@ -1,4 +1,4 @@
-import 'package:drawing_animation/src/parser.dart';
+import 'package:draw_svg/src/parser.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

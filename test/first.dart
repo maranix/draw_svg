@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:drawing_animation/src/parser.dart';
+import 'package:draw_svg/src/parser.dart';
 
 void main() {
   var parser = SvgParser();
